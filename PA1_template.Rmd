@@ -149,6 +149,7 @@ da$daylevel <- factor(da$daylevel)
 ```{r,echo=TRUE}
 dailysteps<-aggregate(steps ~ interval + daylevel, data = da, FUN="mean")
 names(dailysteps) <- c("interval", "daylevel", "steps")
+dailysteps$interval=as.numeric(as.character(dailysteps$interval))
 library("lattice")
 xyplot(steps ~ interval | daylevel, dailysteps, type = "l", layout = c(1, 2), xlab = "Interval", ylab = "Number of steps")
 ```
