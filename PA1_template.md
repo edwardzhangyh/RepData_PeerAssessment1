@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 #### Yuhua Zhang
 #### June 12, 2015
@@ -36,14 +31,16 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 ### 1. Load the data
 
-```{r,echo=TRUE}
+
+```r
 setwd("C:/Users/Yuhua/Desktop/Data Science/6")
 da<-read.csv("activity.csv",header=T,colClasses=c("numeric","character","numeric"))
 ```
 
 ### 2. Transform the data
 
-```{r,echo=TRUE}
+
+```r
 da$date <- as.Date(da$date, format = "%Y-%m-%d")
 da$interval <- as.factor(da$interval)
 ```
@@ -52,32 +49,55 @@ da$interval <- as.factor(da$interval)
 
 ### 1. Make a histogram of the total number of steps taken each day
 
-```{r,echo=TRUE}
+
+```r
 subda <- aggregate(steps ~ date, data = da, sum, na.rm = TRUE)
 hist(subda$steps, main = " Histogram of the Total Number of Steps Taken Each Day", xlab = " Total number of steps taken each day",ylab="Frequency", col = "red")
 ```
 
+![](./PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
 ### 2. Calculate the mean and median total number of steps taken per day
 
-```{r,echo=TRUE}
+
+```r
 mean(subda$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(subda$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
 ### 1. Make a time series plot (i.e.  type = "l" ) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r,echo=TRUE}
+
+```r
 ts <- tapply(da$steps, da$interval, mean, na.rm = TRUE)
 plot(row.names(ts),ts, type = "l", xlab = "5-min interval", ylab = "Average across all Days", main = "Average number of steps taken", col = "red")
 ```
 
+![](./PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
 ### 2. Answer the question: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r,echo=TRUE}
+
+```r
 max <- which.max(ts)
 names(max)
+```
+
+```
+## [1] "835"
 ```
 
 The 835th intervals contain the maximum number of steps.
@@ -86,14 +106,20 @@ The 835th intervals contain the maximum number of steps.
 
 ### 1. Calculate the total number of missing values in the dataset
 
-```{r,echo=TRUE}
+
+```r
 totalna<-sum(is.na(da))
 totalna
 ```
 
+```
+## [1] 2304
+```
+
 ### 2. Filling in all of the missing values in the dataset
 
-```{r,echo=TRUE}
+
+```r
 avestep <- aggregate(steps ~ interval, data = da, FUN=mean)
 repna <- numeric()
 for (i in 1:nrow(da)) {
@@ -109,18 +135,36 @@ for (i in 1:nrow(da)) {
 
 ### 3.Create a new dataset that is equal to the original dataset but with the missing data filled in
 
-```{r,echo=TRUE}
+
+```r
 newda<-da
 newda$steps<-repna
 ```
 
 ### 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day, then calculate the mean and median of steps taken per day
 
-```{r,echo=TRUE}
+
+```r
 subda3 <- aggregate(steps ~ date, data = newda, sum, na.rm = TRUE)
 hist(subda3$steps, main = " Histogram of the Total Number of Steps Taken Each Day", xlab = " Total number of steps taken each day",ylab="Frequency", col = "red")
+```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-10-1.png) 
+
+```r
 mean(subda3$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(subda3$steps)
+```
+
+```
+## [1] 10766.19
 ```
 By filling in the missing values, the mean the same as previous one, while the median is a little larger.
 
@@ -128,7 +172,8 @@ By filling in the missing values, the mean the same as previous one, while the m
 
 ### 1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
 
-```{r,echo=TRUE}
+
+```r
 day<-weekdays(da$date)
 daylevel <- vector()
 for (i in 1:nrow(da)) {
@@ -146,10 +191,13 @@ da$daylevel <- factor(da$daylevel)
 
 ###  2. Make a panel plot containing a time series plot (i.e.  type = "l" ) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)
 
-```{r,echo=TRUE}
+
+```r
 dailysteps<-aggregate(steps ~ interval + daylevel, data = da, FUN="mean")
 names(dailysteps) <- c("interval", "daylevel", "steps")
 library("lattice")
 xyplot(steps ~ interval | daylevel, dailysteps, type = "l", layout = c(1, 2), xlab = "Interval", ylab = "Number of steps")
 ```
+
+![](./PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
 
